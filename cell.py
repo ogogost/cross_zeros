@@ -1,3 +1,4 @@
 
 class Cell():
-    pass
+    def __init__(self, type = None):
+        self.type = type

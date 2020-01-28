@@ -1,3 +1,6 @@
 
 class Player():
-    pass
+    def __init__(self):
+        self.Name = ""
+        self.type = 1
+        self.Figure = ""
