@@ -1,4 +1,7 @@
 
 class Cell():
-    def __init__(self, type = None):
+    EMPTY = '*'
+    CROSS = 'X'
+    ZERO = 'O'
+    def __init__(self, type = EMPTY):
         self.type = type
