@@ -1,22 +1,22 @@
 # cross_zeros
 
 """
-field
+map
 -generate_field(n)
 
 cell
--empty
--cross
--zero
+status: -empty
+        -cross
+        -zero
 
 view
+- view_field
 -pyqt5
 
 ctrl
 -input (player, x, y)
 -move
 -check_win
-
 
 player
 -type_cell(cross, zero)
