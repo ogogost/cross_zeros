@@ -5,8 +5,8 @@ from cross_zeros.player import Player
 
 class Controller:
     def __init__(self):
-        self.field = Field()
-        self.view = View()
+        self.field  = Field(3)
+        self.view = View(self.field)
 
 
     def get_user_turn(self):
@@ -22,7 +22,7 @@ class Controller:
         except:
             return None
 
-    def select_opponent_type(self):
+    def select_opponent_type(self): # функция выбора типа оппонента
         opponent_type = input("Choose your opponent: \n 1. Player2 \n 2. Bot \n 3. AI \n ")
         if opponent_type == "1":
             self.type_player = "Player 2"
@@ -34,20 +34,46 @@ class Controller:
             pass
         print(self.type_player)
 
+    # def select_map_size(self):
+    #     n = int(input("Input map size (for more experience prefer 3, 5, 7, 9...) : "))
+    #     field = Field(n)
 
     def start_game(self):
-        self.select_opponent_type()
-        while True:
-            self.view.display_field()
-            coords = self.get_user_turn()
-            if coords is None:
+        # self.select_opponent_type()
+        # self.select_map_size()
+
+        while win == 0 : # основной цикл игры
+
+            self.view.display_field() # отображаем поле
+
+            type_player_cell = Cell.CROSS # назначаем крестики первому игроку
+
+            player1_input = self.get_user_turn() # первый игрок вводит свои координаты
+
+            if player1_input is None: # проверка координат на валидность
                 print("Wrong coords! Retry!")
                 continue
-            win_result = self.field.calculate_win(coords[0],coords[1])
-            if win_result == 1:
-                print("Player" + self.Player.name + "win!")
-            else:
-                pass
+
+            if self.field.calculate_win(player1_input[0],player1_input[1], type_player_cell) == True: # проверка хода на победу
+                print("Player 1 win!")
+
+           self.field.data.insert([player1_input[0]][player1_input[1]],type_player_cell)  # вставка крестика на поле
+
+            type_player_cell = Cell.ZERO # назначаем нолики второму игроку
+
+            player2_input = self.get_user_turn() # второй игрок вводит свои координаты
+
+            if player2_input is None: # проверка координат на валидность
+                print("Wrong coords! Retry!")
+                continue
+
+            if self.field.calculate_win(player2_input[0],player2_input[1], type_player_cell) == True: # проверка хода на победу
+                print("Player 2 win!")
+
+            self.field.data.insert([player2_input[0]][player2_input[1]], type_player_cell)  # вставка нолика на поле
+
+type_player_cell = Cell.EMPTY
+win = 0
 ctrl = Controller()
 ctrl.start_game()
 
