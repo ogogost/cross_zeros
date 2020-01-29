@@ -99,23 +99,20 @@ def CanIMakeThisTurn(x, y):
 
 # параметры первого игрока, потом будут воодиться, пока хардом
 player1 = Player()
-# player1.Name = input("Введите имя Игрока1: ")
-player1.name = "Тупой человечишка"
+player1.Name = input("Введите имя Игрока1: ")
 player1.type = Player.PLAYER_TYPE
 player1.turn = Player.MY_TURN
-player1.figure = Cell.ZERO
+player1.figure = Cell.CROSS
 
 # параметры второго игрока, потом будут воодиться, пока хардом
 player2 = Player()
-# player2.Name = input("Введите имя Игрока2: ")
-# player2.type = input("Введите тип Игрока2 (1 - человек, 2 - комп): ")
-player2.name = "Крутанский ИИ!"
-player2.type = Player.BOT_TYPE
+player2.Name = input("Введите имя Игрока2: ")
+player2.type = input("Введите тип Игрока2 (1 - человек, 2 - комп): ")
 player2.turn = Player.NOTMY_TURN
-player2.figure = Cell.CROSS
+player2.figure = Cell.ZERO
 
 # создаем поле 6х6
-m = Map(6)
+m = Map(3)
 # создаем вьювир и показываем пустое поле
 v = View(m)
 v.ViewAll()
