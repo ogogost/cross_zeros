@@ -7,6 +7,7 @@ class Player():
     MY_TURN = 1
     NOTMY_TURN = 0
     
+    
     def __init__(self):
         self.name = ""
         self.type = self.PLAYER_TYPE

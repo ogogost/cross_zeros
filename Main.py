@@ -3,8 +3,8 @@ from player import Player
 from view import View
 from cell import Cell
 import time
-#import sys
-#from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+import random
+
 
 def GameOver():
     result = None
@@ -13,10 +13,11 @@ def GameOver():
     y = 0
     
     # ищем пустую клетку
+    result = "over"
     for x in range(m.size):
         for y in range(m.size):
             if m.data[x][y].type == Cell.EMPTY:
-                result = "over"
+                result = None
                 break
     if result is not None: return result
     
@@ -25,10 +26,8 @@ def GameOver():
         sum_pl1 = 0
         sum_pl2 = 0
         for x in range(m.size):
-            if m.data[x][y].type == player1.figure:
-                sum_pl1 += 1
-            if m.data[x][y].type == player2.figure:
-                sum_pl2 += 1
+            if m.data[x][y].type == player1.figure: sum_pl1 += 1
+            if m.data[x][y].type == player2.figure: sum_pl2 += 1
         if sum_pl1 == m.size: result = player1
         if sum_pl2 == m.size: result = player2
         y += 1
@@ -42,10 +41,8 @@ def GameOver():
         sum_pl1 = 0
         sum_pl2 = 0
         for x in range(m.size):
-            if m.data[y][x].type == player1.figure:
-                sum_pl1 += 1
-            if m.data[y][x].type == player2.figure:
-                sum_pl2 += 1
+            if m.data[y][x].type == player1.figure: sum_pl1 += 1
+            if m.data[y][x].type == player2.figure: sum_pl2 += 1
         if sum_pl1 == m.size: result = player1
         if sum_pl2 == m.size: result = player2
         y += 1
@@ -55,10 +52,8 @@ def GameOver():
     sum_pl1 = 0
     sum_pl2 = 0
     for x in range(m.size):
-        if m.data[x][x].type == player1.figure:
-            sum_pl1 += 1
-        if m.data[x][x].type == player2.figure:
-            sum_pl2 += 1
+        if m.data[x][x].type == player1.figure: sum_pl1 += 1
+        if m.data[x][x].type == player2.figure: sum_pl2 += 1
     if sum_pl1 == m.size: result = player1
     if sum_pl2 == m.size: result = player2
     if result is not None: return result
@@ -68,13 +63,22 @@ def GameOver():
     sum_pl2 = 0
     y = m.size-1
     for x in range(m.size):
-        if m.data[y][x].type == player1.figure:
-            sum_pl1 += 1
-        if m.data[y][x].type == player2.figure:
-            sum_pl2 += 1
+        if m.data[y][x].type == player1.figure: sum_pl1 += 1
+        if m.data[y][x].type == player2.figure: sum_pl2 += 1
         y -= 1
     if sum_pl1 == m.size: result = player1
     if sum_pl2 == m.size: result = player2
+    return result
+
+def GetBotTurn():
+
+    while True:
+        result=[]
+        result.clear()
+        result.append(random.randint(1, m.size))
+        result.append(random.randint(1, m.size))
+        if CanIMakeThisTurn(result[0], result[1]):
+            break
     return result
 
 # проедура в которой обрабатывается ход
@@ -82,7 +86,8 @@ def PlayerTurn(x = 0, y = 0, player = None):
     if player.type == Player.PLAYER_TYPE: # если человек
         m.data[x-1][y-1].type = player.figure
     else: # если комп
-        m.data[1-1][1-1].type = player.figure
+        res = GetBotTurn()
+        m.data[res[0]-1][res[1]-1].type = player.figure
 
 def CanIMakeThisTurn(x, y):
     if x > m.size or y > m.size or y<=0 or x<=0: return False
@@ -110,12 +115,10 @@ player2.turn = Player.NOTMY_TURN
 player2.figure = Cell.CROSS
 
 # создаем поле 6х6
-m = Map(3)
+m = Map(6)
 # создаем вьювир и показываем пустое поле
 v = View(m)
 v.ViewAll()
-
-#print(GameOver())
 
 
 while GameOver() == None: # цикл, ход за ходом, пока процедура GameOver не вернет какого нибудь инг
