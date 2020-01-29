@@ -7,15 +7,90 @@ import time
 #from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 
 def GameOver():
-    return False
+    result = None
+    sum_pl1 = 0
+    sum_pl2 = 0
+    y = 0
+    
+    # ищем пустую клетку
+    for x in range(m.size):
+        for y in range(m.size):
+            if m.data[x][y].type == Cell.EMPTY:
+                result = "over"
+                break
+    if result is not None: return result
+    
+    # ищем по вертикали нужное кол-во крестиков или ноликов
+    while y < m.size:
+        sum_pl1 = 0
+        sum_pl2 = 0
+        for x in range(m.size):
+            if m.data[x][y].type == player1.figure:
+                sum_pl1 += 1
+            if m.data[x][y].type == player2.figure:
+                sum_pl2 += 1
+        if sum_pl1 == m.size: result = player1
+        if sum_pl2 == m.size: result = player2
+        y += 1
+    if result is not None: return result
+    
+    # ищем по горизонтали нужное кол-во крестиков или ноликов
+    sum_pl1 = 0
+    sum_pl2 = 0
+    y = 0
+    while y < m.size:
+        sum_pl1 = 0
+        sum_pl2 = 0
+        for x in range(m.size):
+            if m.data[y][x].type == player1.figure:
+                sum_pl1 += 1
+            if m.data[y][x].type == player2.figure:
+                sum_pl2 += 1
+        if sum_pl1 == m.size: result = player1
+        if sum_pl2 == m.size: result = player2
+        y += 1
+    if result is not None: return result
+    
+    #ищем по диагонали
+    sum_pl1 = 0
+    sum_pl2 = 0
+    for x in range(m.size):
+        if m.data[x][x].type == player1.figure:
+            sum_pl1 += 1
+        if m.data[x][x].type == player2.figure:
+            sum_pl2 += 1
+    if sum_pl1 == m.size: result = player1
+    if sum_pl2 == m.size: result = player2
+    if result is not None: return result
+    
+    # ищем по обратной диагонали
+    sum_pl1 = 0
+    sum_pl2 = 0
+    y = m.size-1
+    for x in range(m.size):
+        if m.data[y][x].type == player1.figure:
+            sum_pl1 += 1
+        if m.data[y][x].type == player2.figure:
+            sum_pl2 += 1
+        y -= 1
+    if sum_pl1 == m.size: result = player1
+    if sum_pl2 == m.size: result = player2
+    return result
 
 # проедура в которой обрабатывается ход
 def PlayerTurn(x = 0, y = 0, player = None):
     if player.type == Player.PLAYER_TYPE: # если человек
         m.data[x-1][y-1].type = player.figure
     else: # если комп
-        m.data[2-1][2-1].type = player.figure
+        m.data[1-1][1-1].type = player.figure
 
+def CanIMakeThisTurn(x, y):
+    if x > m.size or y > m.size or y<=0 or x<=0: return False
+    if m.data[x - 1][y - 1].type == Cell.EMPTY:
+        return True
+    else:
+        return False
+        
 
 # параметры первого игрока, потом будут воодиться, пока хардом
 player1 = Player()
@@ -35,14 +110,20 @@ player2.turn = Player.NOTMY_TURN
 player2.figure = Cell.CROSS
 
 # создаем поле 6х6
-m = Map(6)
+m = Map(3)
 # создаем вьювир и показываем пустое поле
 v = View(m)
 v.ViewAll()
 
-while not GameOver(): # цикл, ход за ходом, пока процедура GameOver не вернет TRUE
+#print(GameOver())
+
+
+while GameOver() == None: # цикл, ход за ходом, пока процедура GameOver не вернет какого нибудь инг
     if player1.turn == Player.MY_TURN: # Если ход первого игрока
-        inp = (input(f"Ходит: {player1.name}, Введите координаты x,y : ").split(","))
+        while True:
+            inp = (input(f"Ходит: {player1.name}, Введите координаты x,y : ").split(","))
+            if CanIMakeThisTurn(int(inp[0]), int(inp[1])) == True:
+                break
         PlayerTurn(x=int(inp[0]), y=int(inp[1]), player=player1)
         player1.turn = Player.NOTMY_TURN
         player2.turn = Player.MY_TURN
@@ -52,10 +133,18 @@ while not GameOver(): # цикл, ход за ходом, пока процед�
             print(f"Ходит: {player2.name}, думает... ")
             time.sleep(2)
         else: # Если не бот
-            inp = (input(f"Ходит: {player2.name}, Введите координаты x,y : ").split(","))
+            while True:
+                inp = (input(f"Ходит: {player2.name}, Введите координаты x,y : ").split(","))
+                if CanIMakeThisTurn(int(inp[0]), int(inp[1])) == True:
+                    break
+                    
         PlayerTurn(x=int(inp[0]), y=int(inp[1]), player=player2)
         player2.turn = Player.NOTMY_TURN
         player1.turn = Player.MY_TURN
         
     v.ViewAll()
 
+if isinstance(GameOver(), Player) :
+    print("Победа!!!! : " + GameOver().name)
+else:
+    print("Ничья!!! ")
